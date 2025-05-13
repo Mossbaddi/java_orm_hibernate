@@ -26,18 +26,7 @@ services:
       DB_USER: user
       DB_PASSWORD: password
 
-    # mysql client container for testing
-  mysql-client:
-    image: mysql:8.3
-    container_name: mysql-client
-    depends_on:
-      - mysql
-    entrypoint: ["mysql", "-h", "mysql", "-u", "user", "-p", "password"]
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: testdb
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+
   
 
 
