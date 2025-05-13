@@ -1,4 +1,4 @@
-package com.exemple;
+package models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,7 +13,13 @@ public class User {
     private Long id;
 
     
+    // @Column(columnDefinition="varchar(50)")
     private String nom;
+
+    private int age;
+
+
+
 
     public User() {
     }
@@ -30,11 +36,18 @@ public class User {
         this.nom = nom;
     }
 
+    public void setAge(int age) {
+        this.age = age;
+    }
     public Long getId() {
         return id;
     }
 
     public String getNom() {
         return nom;
+    }
+
+    public int getAge() {
+        return age;
     }
 }
