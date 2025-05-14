@@ -1,10 +1,15 @@
 package models;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -18,6 +23,9 @@ public class Utilisateur {
     private String nom;
     private String email;
 
+    @OneToMany(mappedBy = "auteur", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Article> articles = new ArrayList<>();
+
     public Utilisateur() {
     }
 
@@ -25,6 +33,14 @@ public class Utilisateur {
     public Utilisateur(String nom, String email) {
         this.nom = nom;
         this.email = email;
+    }
+
+    public void addArticle(Article article) {
+        this.articles.add(article);
+    }
+
+    public void removeArticle(Article article) {
+        this.articles.remove(article);
     }
 
     public Long getId() {
@@ -49,6 +65,14 @@ public class Utilisateur {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<Article> getArticles() {
+        return articles;
+    }
+
+    public void setArticles(List<Article> articles) {
+        this.articles = articles;
     }
 
     @Override

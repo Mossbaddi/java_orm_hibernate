@@ -1,47 +1,60 @@
 package com.exemple;
 
-import org.hibernate.SessionFactory;
-import org.hibernate.boot.Metadata;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import java.util.List;
 
-import com.exemple.services.UtilisateurService;
+import org.hibernate.Session;
 
-import models.Utilisateur;
+import models.HQLDemo;
 
 /**
  * Hello world!
  */
 public class App {
     public static void main(String[] args) {
-        System.out.println("Démarrage de l'application");
-        StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-            .configure()
-            .build();
-        Metadata metadata = new MetadataSources(registry).buildMetadata();
-        SessionFactory sessionFactory = metadata.buildSessionFactory();
-        System.out.println("Connexion réussie !");
+        // System.out.println("Démarrage de l'application");
+        // StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
+        //     .configure()
+        //     .build();
+        // Metadata metadata = new MetadataSources(registry).buildMetadata();
+        // SessionFactory sessionFactory = metadata.buildSessionFactory();
+        // System.out.println("Connexion réussie !");
 
+        // Insertion de données de test pour HQLDemo
+        try (Session s = HQLDemo.sessionFactory.openSession()) {
+            s.beginTransaction();
+            HQLDemo demo1 = new HQLDemo("Test 1", 15);
+            HQLDemo demo2 = new HQLDemo("Test 2", 20);
+            HQLDemo demo3 = new HQLDemo("Test 3", 18);
+            s.persist(demo1);
+            s.persist(demo2);
+            s.persist(demo3);
+            s.getTransaction().commit();
+        }
 
-        UtilisateurService service = new UtilisateurService(sessionFactory);
+        // Récupération de données
+        System.out.println("Récupération des données :");
+        System.out.println("-------------------------------------------------");
+        List<HQLDemo> alldemos = HQLDemo.fetchAll();
+        for (HQLDemo demo : alldemos) {
+            System.out.println("ID: " + demo.getId());
+            System.out.println("Titre: " + demo.getTitle());
+            System.out.println("Score: " + demo.getScore());
+            System.out.println("Date de création: " + demo.getCreatedOn());
+            System.out.println("-------------------------------------------------");
+        }
 
-        // Créer un user
-        Utilisateur utilisateur = new Utilisateur("Bob", "bob@bob.bob");
-        service.creer(utilisateur);
-        System.out.println("Utilisateur créé : " + utilisateur);
+        // Récupération avec un score supérieur à 19
+        System.out.println("Récupération des données avec un score supérieur à 19 :");
+        System.out.println("-------------------------------------------------");
+        List<HQLDemo> filteredDemos = HQLDemo.fetchWithMinScore(19);
+        for (HQLDemo demo : filteredDemos) {
+            System.out.println("ID: " + demo.getId());
+            System.out.println("Titre: " + demo.getTitle());
+            System.out.println("Score: " + demo.getScore());
+            System.out.println("Date de création: " + demo.getCreatedOn());
+            System.out.println("-------------------------------------------------");
+        }
 
-        // Lire un user
-        Utilisateur utilisateurLu = service.lire(utilisateur.getId());
-        System.out.println("Utilisateur lu : " + utilisateurLu);
-
-        // Mettre à jour un user
-        utilisateurLu.setNom("John");
-        service.MettreAJour(utilisateurLu);
-        System.out.println("Utilisateur mis à jour : " + utilisateurLu);
-
-        // Supprimer un user
-        service.supprimer(utilisateurLu.getId());
 
     }
 }
