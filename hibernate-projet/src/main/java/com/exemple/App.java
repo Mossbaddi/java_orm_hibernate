@@ -1,58 +1,63 @@
 package com.exemple;
 
-import java.util.List;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.Metadata;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
-import org.hibernate.Session;
-
-import models.HQLDemo;
-
+import com.exemple.dao.ArticleDao;
+import com.exemple.dao.UtilisateurDao;
+import com.exemple.models.Article;
+import com.exemple.models.Utilisateur;
 /**
  * Hello world!
  */
 public class App {
     public static void main(String[] args) {
-        // System.out.println("Démarrage de l'application");
-        // StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-        //     .configure()
-        //     .build();
-        // Metadata metadata = new MetadataSources(registry).buildMetadata();
-        // SessionFactory sessionFactory = metadata.buildSessionFactory();
-        // System.out.println("Connexion réussie !");
+        System.out.println("Démarrage de l'application");
+        StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
+            .configure()
+            .build();
+        Metadata metadata = new MetadataSources(registry).buildMetadata();
+        SessionFactory sessionFactory = metadata.buildSessionFactory();
+        System.out.println("Connexion réussie !");
 
-        // Insertion de données de test pour HQLDemo
-        try (Session s = HQLDemo.sessionFactory.openSession()) {
-            s.beginTransaction();
-            HQLDemo demo1 = new HQLDemo("Test 1", 15);
-            HQLDemo demo2 = new HQLDemo("Test 2", 20);
-            HQLDemo demo3 = new HQLDemo("Test 3", 18);
-            s.persist(demo1);
-            s.persist(demo2);
-            s.persist(demo3);
-            s.getTransaction().commit();
+        // Instantier nos DAO
+        UtilisateurDao utilisateurDao = new UtilisateurDao(sessionFactory);
+        ArticleDao articleDao = new ArticleDao(sessionFactory);
+
+        // Créer utilisateurs et articles
+        Utilisateur utilisateur1 = new Utilisateur("utilisateur1", "bob@bobby.bob");
+        Utilisateur utilisateur2 = new Utilisateur("utilisateur2", "john@john.john");
+        utilisateurDao.creer(utilisateur1);
+        utilisateurDao.creer(utilisateur2);
+
+        Article article1 = new Article("Article 1", "Contenu de l'article 1", utilisateur1);
+        Article article2 = new Article("Article 2: le retour du 1", "Contenu de l'article 2", utilisateur1);
+        Article article3 = new Article("Article 3", "Contenu de l'article 3", utilisateur2);
+        articleDao.creer(article1);
+        articleDao.creer(article2); 
+        articleDao.creer(article3);
+
+        // Lister les articles d'un utilisateur
+        System.out.println("Articles de l'utilisateur 1 :");
+        for (Article article : articleDao.trouverParAuteur(utilisateur1.getId())) {
+            System.out.println(article);
         }
 
-        // Récupération de données
-        System.out.println("Récupération des données :");
-        System.out.println("-------------------------------------------------");
-        List<HQLDemo> alldemos = HQLDemo.fetchAll();
-        for (HQLDemo demo : alldemos) {
-            System.out.println("ID: " + demo.getId());
-            System.out.println("Titre: " + demo.getTitle());
-            System.out.println("Score: " + demo.getScore());
-            System.out.println("Date de création: " + demo.getCreatedOn());
-            System.out.println("-------------------------------------------------");
+        // Lister les articles contenant un mot clé
+        System.out.println("Articles contenant '1' :");
+        for (Article article : articleDao.chercherParTitre("1")) {
+            System.out.println(article);
         }
 
-        // Récupération avec un score supérieur à 19
-        System.out.println("Récupération des données avec un score supérieur à 19 :");
-        System.out.println("-------------------------------------------------");
-        List<HQLDemo> filteredDemos = HQLDemo.fetchWithMinScore(19);
-        for (HQLDemo demo : filteredDemos) {
-            System.out.println("ID: " + demo.getId());
-            System.out.println("Titre: " + demo.getTitle());
-            System.out.println("Score: " + demo.getScore());
-            System.out.println("Date de création: " + demo.getCreatedOn());
-            System.out.println("-------------------------------------------------");
+        // Trouver un utilisateur par son email
+        Utilisateur utilisateurTrouve = utilisateurDao.trouverParEmail("bob@bobby.bob");
+        if (utilisateurTrouve != null) {
+            System.out.println("Utilisateur trouvé : " + utilisateurTrouve);
+        } else {
+            System.out.println("Aucun utilisateur trouvé avec cet email.");
         }
 
 

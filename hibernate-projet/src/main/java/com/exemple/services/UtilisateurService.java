@@ -3,7 +3,7 @@ package com.exemple.services;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-import models.Utilisateur;
+import com.exemple.models.Utilisateur;
 
 public class UtilisateurService {
     private final SessionFactory sessionFactory;

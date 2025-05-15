@@ -16,8 +16,8 @@
 
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
-        <mapping class="models.User"/>
-        <mapping class="models.Utilisateur"/>
-        <mapping class="models.Article"/>
+        <mapping class="com.exemple.models.User"/>
+        <mapping class="com.exemple.models.Utilisateur"/>
+        <mapping class="com.exemple.models.Article"/>
     </session-factory>
 </hibernate-configuration>
